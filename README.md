@@ -14,3 +14,16 @@
 ```
 https://www.raspberrypi.org/downloads/raspbian/
 ```
+
+### kaikan message package
+
+아두이노 ros serial을 위한 custom message package </br>
+
+```
+catkin_ws/src 폴더에 넣기
+``` 
+그 다음으로
+```
+catkin_make
+```
+실행
