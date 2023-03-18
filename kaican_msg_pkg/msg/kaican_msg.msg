@@ -1,4 +1,4 @@
-uint8 throttle
+float32 throttle
 uint8 temp_mot
 uint8 temp_cnt
 uint32 volt_bat
