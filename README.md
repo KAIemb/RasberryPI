@@ -33,7 +33,11 @@ catkin_make
 ```
 실행</br>
 
-
+새로운 브랜치에 넣고싶으면 아래 강제로 입력해서 브랜치로 넣으면됨
 ```
-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
+git push -f origin local-branch:remote-branch
+```
+
+ui_dirver.py 코드가 실질적으로 최종 update된 코드이다.
+```실제
 ```
