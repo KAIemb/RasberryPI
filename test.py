@@ -9,8 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import rospy
-from kaican_msg.msg import kacican_msg
 
 
 class Ui_MainWindow(object):
@@ -39,9 +37,7 @@ class Ui_MainWindow(object):
         self.lineEdit_3.setObjectName("lineEdit_3")
         self.speed = QtWidgets.QProgressBar(self.centralwidget)
         self.speed.setGeometry(QtCore.QRect(260, 180, 131, 31))
-
-        # adjust propostion 
-        self.speed.setProperty("value", 0)
+        self.speed.setProperty("value", 24)
         self.speed.setOrientation(QtCore.Qt.Horizontal)
         self.speed.setObjectName("speed")
         self.lineEdit_6 = QtWidgets.QLineEdit(self.centralwidget)
@@ -65,8 +61,7 @@ class Ui_MainWindow(object):
         self.label_3.setPixmap(QtGui.QPixmap("carwheel.jpg"))
         self.label_3.setScaledContents(True)
         self.label_3.setObjectName("label_3")
-
-        # lcdNumber 는 왼쪽 앞 바퀴 (보는사람 입장)
+        # lcdNumber 는 왼쪽바퀴 (보는사람 입장)
         self.lcdNumber = QtWidgets.QLCDNumber(self.centralwidget)
         self.lcdNumber.setGeometry(QtCore.QRect(410, 100, 64, 23))
         self.lcdNumber.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -75,37 +70,27 @@ class Ui_MainWindow(object):
         self.lcdNumber.setDigitCount(4)
         self.lcdNumber.setObjectName("lcdNumber")
 
-        # lcdNumber2 는 오른쪽 앞 바퀴 (보는사람 입장)        
-        self.lcdNumber_2 = QtWidgets.QLCDNumber(self.centralwidget)
-        self.lcdNumber_2.setGeometry(QtCore.QRect(560, 100, 64, 23))
-        self.lcdNumber_2.setObjectName("lcdNumber_2")
-
-        # lcdNumber3 는 왼쪽 뒷 바퀴 (보는사람 입장)
-        self.lcdNumber_3 = QtWidgets.QLCDNumber(self.centralwidget)
-        self.lcdNumber_3.setGeometry(QtCore.QRect(410, 220, 64, 23))
-        self.lcdNumber_3.setObjectName("lcdNumber_3")
+        # lcdNumber
+        # self.lcdNumber_2 = QtWidgets.QLCDNumber(self.centralwidget)
+        # self.lcdNumber_2.setGeometry(QtCore.QRect(560, 100, 64, 23))
+        # self.lcdNumber_2.setObjectName("lcdNumber_2")
+        # self.lcdNumber_3 = QtWidgets.QLCDNumber(self.centralwidget)
+        # self.lcdNumber_3.setGeometry(QtCore.QRect(410, 220, 64, 23))
+        # self.lcdNumber_3.setObjectName("lcdNumber_3")
         self.lineEdit_8 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_8.setGeometry(QtCore.QRect(460, 50, 113, 20))
         self.lineEdit_8.setObjectName("lineEdit_8")
-
-        # lcdNumber4 는 오른쪽 뒷 바퀴 (보는사람 입장)
         self.lcdNumber_4 = QtWidgets.QLCDNumber(self.centralwidget)
         self.lcdNumber_4.setGeometry(QtCore.QRect(560, 220, 64, 23))
         self.lcdNumber_4.setObjectName("lcdNumber_4")
-
-        # 랩타입 및 횟수
-        self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
-        self.tableWidget.setGeometry(QtCore.QRect(40, 280, 171, 191))
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(0)
-        self.tableWidget.setRowCount(0)
-
-        # throttle progress bar
+        # self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
+        # self.tableWidget.setGeometry(QtCore.QRect(40, 280, 171, 191))
+        # self.tableWidget.setObjectName("tableWidget")
+        # self.tableWidget.setColumnCount(0)
+        # self.tableWidget.setRowCount(0)
         self.throttle = QtWidgets.QProgressBar(self.centralwidget)
         self.throttle.setGeometry(QtCore.QRect(480, 310, 111, 23))
-
-        # adjust propostion
-        self.throttle.setProperty("value", 0)
+        self.throttle.setProperty("value", 24)
         self.throttle.setObjectName("throttle")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -119,67 +104,6 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        # ROS 노드 초기화 
-        rospy.init_node('qt_ros_node', anonymous=True)
-        
-        # ROS topic 구독자 생성
-        '''
-        topic_name: 구독할 topic의 이름입니다.
-        topic_type: topic의 메시지 타입입니다. 이는 kaican_msg.msg에서 정의한 kacican_msg와 같은 메시지 타입 객체입니다.
-        callback: topic에서 새로운 메시지가 수신될 때마다 호출되는 콜백 함수입니다. 이 콜백 함수는 메시지를 인자로 받습니다.
-        '''
-        rospy.Subscriber('battery_voltage', kacican_msg, self.update_battery_voltage)
-        rospy.Subscriber('battery_current', kacican_msg, self.update_battery_current)
-        rospy.Subscriber('motor_rpm', kacican_msg, self.update_motor_rpm)
-        rospy.Subscriber('motor_temp', kacican_msg, self.update_motor_temp)
-        rospy.Subscriber('speed', kacican_msg, self.update_progressBar)
-        rospy.Subscriber('throttle', kacican_msg, self.update_progressBar_2)
-        rospy.Subscriber('speed', kacican_msg, self.update_progressBar)
-        rospy.Subscriber('lcdNumber', kacican_msg, self.lcdNumber)
-        rospy.Subscriber('lcdNumber2', kacican_msg, self.lcdNumber2)
-        rospy.Subscriber('lcdNumber3', kacican_msg, self.lcdNumber3)
-        rospy.Subscriber('lcdNumber4', kacican_msg, self.lcdNumber4)
-
-    def update_progressBar(self, data):
-        # 들어온 데이터를 progressBar 범위로 매핑하여 값 설정
-        mapped_value = int(data.data * self.speed.maximum())
-        self.speed.setValue(mapped_value)
-
-    def update_progressBar_2(self, data):
-        # 들어온 데이터를 progressBar 범위로 매핑하여 값 설정
-        mapped_value = int(data.data * self.throttle.maximum())
-        self.throttle.setValue(mapped_value)
-    
-    # update 바퀴
-    def lcdNumber(self, data):
-        self.lcdNumber.display(data.data)
-
-    def lcdNumber2(self, data):
-        self.lcdNumber2.display(data.data)
-
-    def lcdNumber3(self, data):
-        self.lcdNumber3.display(data.data)
-
-    def lcdNumber4(self, data):
-        self.lcdNumber4.display(data.data)
-
-    # update battery voltage ui    
-    def update_battery_voltage(self, data):
-        self.battery_voltage.display(data.data)
-        
-    # battery_current topic update ui
-    def update_battery_current(self, data):
-        self.battery_current.display(data.data)
-
-    # battery_current topic update ui
-    def update_motor_rpm(self, data):
-        self.motor_rpm.display(data.data)
-
-    # motor_temp topic update ui
-    def update_motor_temp(self, data):
-        self.motor_temp.display(data.data)
-
-    # text ui -> it is text block code. not value.
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -188,7 +112,6 @@ class Ui_MainWindow(object):
         self.lineEdit_3.setText(_translate("MainWindow", "Battery Current"))
         self.speed.setFormat(_translate("MainWindow", "%p km/h"))
         self.lineEdit_6.setText(_translate("MainWindow", "Motor Temp."))
-        # 옆에 보여주는 그냥 글자정도?
         self.lineEdit_7.setText(_translate("MainWindow", "Motor RPM"))
         self.label.setText(_translate("MainWindow", "Speed"))
         self.lineEdit_8.setText(_translate("MainWindow", "    <Wheel RPM>"))

@@ -9,7 +9,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import rospy
+from kaican_msg.msg import kacican_msg
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -42,12 +43,12 @@ class Ui_MainWindow(object):
         self.lineEdit_5.setObjectName("lineEdit_5")
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
         self.progressBar.setGeometry(QtCore.QRect(240, 331, 131, 20))
-        self.progressBar.setProperty("value", 24)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setOrientation(QtCore.Qt.Horizontal)
         self.progressBar.setObjectName("progressBar")
         self.progressBar_2 = QtWidgets.QProgressBar(self.centralwidget)
         self.progressBar_2.setGeometry(QtCore.QRect(240, 360, 131, 16))
-        self.progressBar_2.setProperty("value", 24)
+        self.progressBar_2.setProperty("value", 0)
         self.progressBar_2.setOrientation(QtCore.Qt.Horizontal)
         self.progressBar_2.setObjectName("progressBar_2")
         self.lineEdit_6 = QtWidgets.QLineEdit(self.centralwidget)
@@ -62,6 +63,7 @@ class Ui_MainWindow(object):
         self.motor_temp = QtWidgets.QLCDNumber(self.centralwidget)
         self.motor_temp.setGeometry(QtCore.QRect(160, 270, 64, 23))
         self.motor_temp.setObjectName("motor_temp")
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 477, 22))
@@ -70,9 +72,51 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-
+        
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        # ROS 노드 초기화 
+        rospy.init_node('qt_ros_node', anonymous=True)
+        
+        # ROS topic 구독자 생성
+        '''
+        topic_name: 구독할 topic의 이름입니다.
+        topic_type: topic의 메시지 타입입니다. 이는 kaican_msg.msg에서 정의한 kacican_msg와 같은 메시지 타입 객체입니다.
+        callback: topic에서 새로운 메시지가 수신될 때마다 호출되는 콜백 함수입니다. 이 콜백 함수는 메시지를 인자로 받습니다.
+        '''
+        rospy.Subscriber('battery_voltage', kacican_msg, self.update_battery_voltage)
+        rospy.Subscriber('battery_current', kacican_msg, self.update_battery_current)
+        rospy.Subscriber('motor_rpm', kacican_msg, self.update_motor_rpm)
+        rospy.Subscriber('motor_temp', kacican_msg, self.update_motor_temp)
+        rospy.Subscriber('progress', kacican_msg, self.update_progressBar)
+        rospy.Subscriber('progress_2', kacican_msg, self.update_progressBar_2)
+
+    def update_progressBar(self, data):
+        # 들어온 데이터를 progressBar 범위로 매핑하여 값 설정
+        mapped_value = int(data.data * self.progressBar.maximum())
+        self.progressBar.setValue(mapped_value)
+
+    def update_progressBar_2(self, data):
+        # 들어온 데이터를 progressBar 범위로 매핑하여 값 설정
+        mapped_value = int(data.data * self.progressBar_2.maximum())
+        self.progressBar_2.setValue(mapped_value)
+
+    # update battery voltage ui    
+    def update_battery_voltage(self, data):
+        self.battery_voltage.display(data.data)
+        
+    # battery_current topic update ui
+    def update_battery_current(self, data):
+        self.battery_current.display(data.data)
+
+    # battery_current topic update ui
+    def update_motor_rpm(self, data):
+        self.motor_rpm.display(data.data)
+
+    # motor_temp topic update ui
+    def update_motor_temp(self, data):
+        self.motor_temp.display(data.data)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
