@@ -39,5 +39,3 @@ git push -f origin local-branch:remote-branch
 ```
 
 ui_dirver.py 코드가 실질적으로 최종 update된 코드이다.
-```실제
-```
